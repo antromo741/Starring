@@ -1,0 +1,231 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useModal } from "./ModalProvider";
+import { backdropSrc, posterGradient } from "@/lib/images";
+import type { Title } from "@/lib/types";
+
+export default function TitleModal() {
+  const { active, close, autoPlay } = useModal();
+
+  if (!active) return null;
+
+  return (
+    <TitleModalContent
+      key={`${active.id}:${autoPlay ? "play" : "details"}`}
+      active={active}
+      close={close}
+      autoPlay={autoPlay}
+    />
+  );
+}
+
+function TitleModalContent({
+  active,
+  close,
+  autoPlay,
+}: {
+  active: Title;
+  close: () => void;
+  autoPlay: boolean;
+}) {
+  const [playing, setPlaying] = useState(autoPlay);
+  const [inList, setInList] = useState(false);
+
+  // Lock body scroll + close on Escape while the modal is open.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [close]);
+
+  const backdrop = backdropSrc(active, "w780");
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/70 px-4 py-8 animate-fade-in"
+      onClick={close}
+      role="dialog"
+      aria-modal="true"
+      aria-label={active.name}
+    >
+      <div
+        className="relative my-auto w-full max-w-3xl overflow-hidden rounded-lg bg-[#181818] shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Banner / player */}
+        <div className="relative aspect-video w-full bg-black">
+          {playing ? (
+            active.youtubeKey ? (
+              <iframe
+                className="h-full w-full"
+                src={`https://www.youtube.com/embed/${active.youtubeKey}?autoplay=1&mute=1&rel=0&modestbranding=1`}
+                title={`${active.name} trailer`}
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <video
+                className="h-full w-full bg-black"
+                src={active.videoUrl}
+                controls
+                autoPlay
+                playsInline
+              />
+            )
+          ) : (
+            <>
+              {backdrop ? (
+                <Image
+                  src={backdrop}
+                  alt={active.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div
+                  className="absolute inset-0 flex items-end p-8"
+                  style={{ background: posterGradient(active.name) }}
+                >
+                  <h2 className="text-3xl font-extrabold drop-shadow-lg sm:text-5xl">
+                    {active.name}
+                  </h2>
+                </div>
+              )}
+              {/* Bottom fade for legibility */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent" />
+
+              {/* Title + actions overlaid on the banner */}
+              <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-4">
+                {backdrop && (
+                  <h2 className="max-w-[70%] text-2xl font-extrabold drop-shadow-lg sm:text-4xl">
+                    {active.name}
+                  </h2>
+                )}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setPlaying(true)}
+                    className="flex items-center gap-2 rounded bg-white px-6 py-2 font-semibold text-black transition hover:bg-white/80"
+                  >
+                    <PlayIcon className="h-5 w-5" />
+                    Play
+                  </button>
+                  <CircleButton
+                    label={inList ? "Remove from My List" : "Add to My List"}
+                    onClick={() => setInList((v) => !v)}
+                  >
+                    {inList ? <CheckIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
+                  </CircleButton>
+                  <CircleButton label="I like this">
+                    <ThumbIcon className="h-6 w-6" />
+                  </CircleButton>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Close button */}
+          <button
+            onClick={close}
+            aria-label="Close"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818]/80 text-white transition hover:bg-[#181818]"
+          >
+            <CloseIcon className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Details */}
+        <div className="space-y-4 p-6 sm:p-8">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span className="font-semibold text-green-500">{active.matchPct}% Match</span>
+            <span className="text-neutral-300">{active.year}</span>
+            <span className="rounded border border-neutral-500 px-1.5 text-xs text-neutral-300">
+              {active.rating}
+            </span>
+            <span className="text-neutral-300">{active.length}</span>
+            <span className="rounded bg-neutral-700 px-1.5 text-[10px] font-bold tracking-wide text-neutral-200">
+              HD
+            </span>
+          </div>
+
+          <p className="text-sm leading-relaxed text-neutral-200 sm:text-base">
+            {active.overview}
+          </p>
+
+          {active.genres.length > 0 && (
+            <p className="text-sm text-neutral-400">
+              <span className="text-neutral-500">Genres: </span>
+              {active.genres.join(", ")}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CircleButton({
+  children,
+  label,
+  onClick,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-neutral-400 bg-black/40 text-white transition hover:border-white hover:bg-white/10"
+    >
+      {children}
+    </button>
+  );
+}
+
+/* --- Icons --- */
+function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+function PlusIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className={className} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+function ThumbIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M7 11v9H4a1 1 0 01-1-1v-7a1 1 0 011-1h3zm0 0l4-7a2 2 0 012 2v3h5a2 2 0 012 2.3l-1.2 6A2 2 0 0118.8 20H7" />
+    </svg>
+  );
+}
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
