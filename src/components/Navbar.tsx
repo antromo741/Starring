@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "My List"];
+import { useEffect, useRef, useState } from "react";
+import { useCatalog } from "./CatalogProvider";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { query, setQuery, searchOpen, setSearchOpen } = useCatalog();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -14,33 +15,95 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const expanded = searchOpen || query.length > 0;
+
+  const openSearch = () => {
+    setSearchOpen(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
+  const clearSearch = () => {
+    setQuery("");
+    setSearchOpen(false);
+  };
+
+  // Nav links double as quick filters / jumps.
+  const onLink = (link: string) => {
+    clearSearch();
+    if (link === "My List") {
+      document.getElementById("my-list")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "My List"];
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
-        scrolled ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 to-transparent"
+        scrolled || expanded ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 to-transparent"
       }`}
     >
       <nav className="flex items-center justify-between px-4 py-3 sm:px-8">
         <div className="flex items-center gap-8">
-          <span className="select-none text-2xl font-extrabold tracking-tight text-netflix sm:text-3xl">
+          <button
+            onClick={() => onLink("Home")}
+            className="select-none text-2xl font-extrabold tracking-tight text-netflix sm:text-3xl"
+          >
             NETFLIX
-          </span>
+          </button>
           <ul className="hidden items-center gap-5 text-sm text-neutral-200 lg:flex">
             {LINKS.map((link, i) => (
-              <li
-                key={link}
-                className={`cursor-pointer transition hover:text-white ${
-                  i === 0 ? "font-semibold text-white" : ""
-                }`}
-              >
-                {link}
+              <li key={link}>
+                <button
+                  onClick={() => onLink(link)}
+                  className={`cursor-pointer transition hover:text-white ${
+                    i === 0 ? "font-semibold text-white" : ""
+                  }`}
+                >
+                  {link}
+                </button>
               </li>
             ))}
           </ul>
         </div>
 
         <div className="flex items-center gap-4 text-white">
-          <SearchIcon className="hidden h-5 w-5 cursor-pointer sm:block" />
+          {/* Search */}
+          <div
+            className={`flex items-center transition-all ${
+              expanded
+                ? "gap-2 rounded border border-neutral-600 bg-black/70 px-2 py-1"
+                : ""
+            }`}
+          >
+            <button
+              onClick={expanded ? () => inputRef.current?.focus() : openSearch}
+              aria-label="Search"
+              className="text-white"
+            >
+              <SearchIcon className="h-5 w-5 cursor-pointer" />
+            </button>
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onBlur={() => query.length === 0 && setSearchOpen(false)}
+              onKeyDown={(e) => e.key === "Escape" && clearSearch()}
+              placeholder="Titles, genres"
+              aria-label="Search titles"
+              className={`bg-transparent text-sm text-white placeholder:text-neutral-400 focus:outline-none ${
+                expanded ? "w-36 sm:w-52" : "w-0"
+              } transition-all`}
+            />
+            {expanded && query.length > 0 && (
+              <button onClick={clearSearch} aria-label="Clear search" className="text-neutral-400 hover:text-white">
+                <CloseIcon className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
           <span className="hidden cursor-pointer text-sm sm:inline">Kids</span>
           <BellIcon className="hidden h-5 w-5 cursor-pointer sm:block" />
           <div className="h-8 w-8 cursor-pointer overflow-hidden rounded bg-gradient-to-br from-red-500 to-orange-400" />
@@ -62,6 +125,13 @@ function BellIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0" />
+    </svg>
+  );
+}
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
     </svg>
   );
 }

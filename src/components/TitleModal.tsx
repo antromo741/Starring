@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useModal } from "./ModalProvider";
+import { useCatalog } from "./CatalogProvider";
 import { backdropSrc, posterGradient } from "@/lib/images";
 import type { Title } from "@/lib/types";
 
@@ -31,7 +32,8 @@ function TitleModalContent({
   autoPlay: boolean;
 }) {
   const [playing, setPlaying] = useState(autoPlay);
-  const [inList, setInList] = useState(false);
+  const { inList, toggleList } = useCatalog();
+  const saved = inList(active.id);
 
   // Lock body scroll + close on Escape while the modal is open.
   useEffect(() => {
@@ -119,10 +121,10 @@ function TitleModalContent({
                     Play
                   </button>
                   <CircleButton
-                    label={inList ? "Remove from My List" : "Add to My List"}
-                    onClick={() => setInList((v) => !v)}
+                    label={saved ? "Remove from My List" : "Add to My List"}
+                    onClick={() => toggleList(active)}
                   >
-                    {inList ? <CheckIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
+                    {saved ? <CheckIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
                   </CircleButton>
                   <CircleButton label="I like this">
                     <ThumbIcon className="h-6 w-6" />

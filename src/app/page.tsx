@@ -1,26 +1,31 @@
 import { getHomeData } from "@/lib/content";
+import type { Title } from "@/lib/types";
+import CatalogProvider from "@/components/CatalogProvider";
 import ModalProvider from "@/components/ModalProvider";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import Row from "@/components/Row";
+import HomeContent from "@/components/HomeContent";
 import Footer from "@/components/Footer";
 
 export default async function Home() {
   const { hero, rows, source } = await getHomeData();
 
+  // Flatten + de-duplicate every title so search and "My List" can look any up.
+  const seen = new Set<number>();
+  const allTitles: Title[] = [];
+  for (const t of [hero, ...rows.flatMap((r) => r.items)]) {
+    if (!seen.has(t.id)) {
+      seen.add(t.id);
+      allTitles.push(t);
+    }
+  }
+
   return (
-    <ModalProvider>
-      <Navbar />
-      <main className="flex-1">
-        <Hero title={hero} />
-        {/* Rows pulled up to overlap the hero's bottom fade, like Netflix */}
-        <div className="relative z-10 -mt-16 space-y-8 pb-8 sm:-mt-24">
-          {rows.map((row) => (
-            <Row key={row.id} row={row} />
-          ))}
-        </div>
-      </main>
-      <Footer demoMode={source === "mock"} />
-    </ModalProvider>
+    <CatalogProvider allTitles={allTitles}>
+      <ModalProvider>
+        <Navbar />
+        <HomeContent hero={hero} rows={rows} />
+        <Footer demoMode={source === "mock"} />
+      </ModalProvider>
+    </CatalogProvider>
   );
 }
