@@ -60,9 +60,9 @@ export default function Navbar() {
           </button>
           <button
             onClick={() => onLink("Home")}
-            className="select-none text-2xl font-extrabold tracking-tight text-netflix sm:text-3xl"
+            className="select-none text-2xl font-extrabold tracking-tight text-accent sm:text-3xl"
           >
-            NETFLIX
+            STARRING
           </button>
           <ul className="hidden items-center gap-5 text-sm text-neutral-200 lg:flex">
             {LINKS.map((link, i) => (

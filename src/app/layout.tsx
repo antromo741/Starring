@@ -17,19 +17,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? process.env.URL ?? "http://localhost:3000",
   ),
-  title: { default: "Netflix Clone", template: "%s · Netflix Clone" },
+  title: { default: "Starring — Personalized Streaming Catalog", template: "%s · Starring" },
   description:
-    "A Netflix UI clone built with Next.js, React and Tailwind CSS — with a personalized 'Starring You' catalog, search, My List, profiles and Continue Watching.",
+    "A personalized streaming catalog app built with Next.js, React and Tailwind CSS — with a build-time 'Starring You' poster pipeline, search, My List, profiles and Continue Watching.",
   openGraph: {
-    title: "Netflix Clone",
-    description: "A personalized Netflix-style streaming UI built with Next.js.",
+    title: "Starring — Personalized Streaming Catalog",
+    description: "A personalized streaming catalog app with an AI-driven poster pipeline, built with Next.js.",
     type: "website",
-    images: [{ url: "/starring/redbeard-wide.png", width: 1280, height: 720, alt: "Netflix Clone" }],
+    images: [{ url: "/starring/redbeard-wide.png", width: 1280, height: 720, alt: "Starring" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Netflix Clone",
-    description: "A personalized Netflix-style streaming UI built with Next.js.",
+    title: "Starring — Personalized Streaming Catalog",
+    description: "A personalized streaming catalog app with an AI-driven poster pipeline, built with Next.js.",
     images: ["/starring/redbeard-wide.png"],
   },
 };

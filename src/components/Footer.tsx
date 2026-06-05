@@ -33,8 +33,10 @@ export default function Footer({ demoMode = false }: { demoMode?: boolean }) {
             </a>
           ))}
         </div>
-        <p className="text-xs">
-          Netflix Clone — a personal portfolio project. Not affiliated with Netflix, Inc.
+        <p className="max-w-3xl text-xs leading-relaxed">
+          Starring — a personal portfolio project inspired by modern streaming-platform
+          interfaces. It is not affiliated with, endorsed by, or connected to any streaming
+          company. All title names and generated artwork are fictional.
         </p>
       </div>
     </footer>

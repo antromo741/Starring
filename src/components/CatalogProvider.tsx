@@ -12,8 +12,8 @@ import {
 import type { Title } from "@/lib/types";
 import { useProfile } from "./ProfileProvider";
 
-const myListKey = (pid: string) => `netflix-clone:my-list:${pid}`;
-const continueKey = (pid: string) => `netflix-clone:continue:${pid}`;
+const myListKey = (pid: string) => `starring:my-list:${pid}`;
+const continueKey = (pid: string) => `starring:continue:${pid}`;
 
 function readJSON<T>(key: string, fallback: T): T {
   try {

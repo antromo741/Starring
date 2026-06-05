@@ -157,6 +157,16 @@ async function stylize(srcBuf, style, w, h) {
 /* --------------------------------------------------------------- helpers */
 function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function seedOf(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) h = (h ^ str.charCodeAt(i)) * 16777619; return h >>> 0; }
+function starPoints(cx, cy, outer) {
+  const inner = outer * 0.4;
+  let p = "";
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = ((-90 + i * 36) * Math.PI) / 180;
+    p += `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)} `;
+  }
+  return p.trim();
+}
 function wrap(text, max) {
   const words = text.split(" "); const lines = []; let cur = "";
   for (const w of words) { if ((cur + " " + w).trim().length > max && cur) { lines.push(cur); cur = w; } else cur = (cur + " " + w).trim(); }
@@ -264,8 +274,8 @@ function overlaySVG(cfg, W, H, wide, withText, soft = false) {
   ${scrim}
   ${withText ? `
   <g font-family="Arial, sans-serif" font-weight="800">
-    <text x="${mx}" y="${wide ? 60 : 58}" font-size="32" fill="#e50914">N</text>
-    <text x="${mx + 26}" y="${wide ? 60 : 58}" font-size="17" letter-spacing="4" fill="#fff" opacity="0.85">${cfg.kind}</text>
+    <polygon points="${starPoints(mx + 12, wide ? 48 : 46, 14)}" fill="#f5c542"/>
+    <text x="${mx + 36}" y="${wide ? 60 : 58}" font-size="17" letter-spacing="4" fill="#fff" opacity="0.85">${cfg.kind}</text>
   </g>
 
   <text x="${mx}" y="${credBaseline.toFixed(1)}" font-family="Arial, sans-serif" font-weight="700" font-size="${credFs}" letter-spacing="3" fill="#ffffff" opacity="0.92">${STAR}</text>

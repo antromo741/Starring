@@ -18,7 +18,7 @@ export async function getHomeData(): Promise<{
       const { hero, rows } = await getTmdbHome();
       if (rows.length > 0) return { hero, rows, source: "tmdb" };
     } catch (err) {
-      console.warn("[netflix-clone] TMDB fetch failed, using mock data:", err);
+      console.warn("[starring] TMDB fetch failed, using mock data:", err);
     }
   }
   return { hero: HERO_TITLE, rows: HOME_ROWS, source: "mock" };

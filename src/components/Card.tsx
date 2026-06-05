@@ -52,7 +52,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
           style={{ background: posterGradient(title.name) }}
         >
           <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
-            N Series
+            ★ Series
           </span>
           <span className="text-lg font-extrabold leading-tight drop-shadow-md">{title.name}</span>
         </div>
@@ -61,7 +61,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
       {/* Continue Watching progress bar */}
       {progress !== undefined && progress > 0 && (
         <div className="absolute inset-x-0 bottom-0 z-20 h-1 bg-white/30">
-          <div className="h-full bg-netflix" style={{ width: `${Math.min(100, progress * 100)}%` }} />
+          <div className="h-full bg-accent" style={{ width: `${Math.min(100, progress * 100)}%` }} />
         </div>
       )}
 

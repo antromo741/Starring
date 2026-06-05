@@ -3,14 +3,14 @@
 :root {
   --background: #141414;
   --foreground: #ffffff;
-  --netflix-red: #e50914;
-  --netflix-red-hover: #f6121d;
+  --accent: #f5c542;
+  --accent-hover: #ffd866;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-netflix: var(--netflix-red);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

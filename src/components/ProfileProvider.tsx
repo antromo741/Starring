@@ -9,8 +9,8 @@ export interface Profile {
   kids?: boolean;
 }
 
-const CURRENT_KEY = "netflix-clone:current-profile";
-const SESSION_FLAG = "netflix-clone:profile-chosen";
+const CURRENT_KEY = "starring:current-profile";
+const SESSION_FLAG = "starring:profile-chosen";
 
 const PROFILES: Profile[] = [
   { id: "anthony", name: "Anthony", gradient: ["#e50914", "#f59e0b"] },

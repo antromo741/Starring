@@ -147,10 +147,10 @@ const documentaries: Title[] = [
 
 export const HOME_ROWS: Row[] = [
   { id: "starring-you", title: "Starring Anthony Roma", featured: true, items: STARRING },
-  { id: "only-on-netflix", title: "Only on Netflix", featured: true, items: ORIGINALS },
+  { id: "only-on-starring", title: "Only on Starring", featured: true, items: ORIGINALS },
   { id: "trending", title: "Trending Now", items: trending },
-  { id: "originals", title: "Netflix Originals", featured: true, items: originals },
-  { id: "popular", title: "Popular on Netflix", items: popular },
+  { id: "originals", title: "Starring Originals", featured: true, items: originals },
+  { id: "popular", title: "Popular on Starring", items: popular },
   { id: "action", title: "Action & Adventure", items: action },
   { id: "comedies", title: "Comedies", items: comedies },
   { id: "scifi", title: "Sci-Fi & Fantasy", items: scifi },

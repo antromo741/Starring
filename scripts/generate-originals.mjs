@@ -99,6 +99,17 @@ function seedOf(str) {
   for (let i = 0; i < str.length; i++) h = (h ^ str.charCodeAt(i)) * 16777619;
   return h >>> 0;
 }
+// 5-pointed star polygon points (drawn as a path so it always renders).
+function starPoints(cx, cy, outer) {
+  const inner = outer * 0.4;
+  let p = "";
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = ((-90 + i * 36) * Math.PI) / 180;
+    p += `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)} `;
+  }
+  return p.trim();
+}
 function esc(s) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -294,8 +305,8 @@ function buildSVG(cfg, W, H, wide) {
   ${wide ? "" : `
   <!-- brand tag -->
   <g font-family="Arial, sans-serif" font-weight="800">
-    <text x="${mx}" y="60" font-size="34" fill="#e50914">N</text>
-    <text x="${mx + 28}" y="60" font-size="18" letter-spacing="4" fill="#ffffff" opacity="0.85">${cfg.kind}</text>
+    <polygon points="${starPoints(mx + 13, 46, 15)}" fill="#f5c542"/>
+    <text x="${mx + 38}" y="58" font-size="18" letter-spacing="4" fill="#ffffff" opacity="0.85">${cfg.kind}</text>
   </g>
 
   <!-- tagline -->

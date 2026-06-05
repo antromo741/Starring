@@ -5,7 +5,7 @@ export interface Title {
   year: number;
   /** Content rating, e.g. "TV-MA", "PG-13". */
   rating: string;
-  /** Netflix-style relevance score, 80–99. */
+  /** Relevance score, 80–99. */
   matchPct: number;
   /** "1h 58m" for films or "3 Seasons" for series. */
   length: string;

@@ -1,8 +1,8 @@
-# 🍿 Netflix Clone
+# ★ Starring — Personalized Streaming Catalog
 
-A polished, full-featured Netflix UI clone built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4** — featuring a **personalized "Starring You" catalog** whose movie posters are generated programmatically from a real photo.
+A polished, full-featured **streaming catalog app** built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4** — including profile selection, searchable content rows, persistent **My List**, **Continue Watching** progress, detail modals, keyboard-accessible interactions, and a personalized **"Starring You"** catalog generated from a single photo.
 
-> ### ▶️ **[Live demo → anthonynetclone.netlify.app](https://anthonynetclone.netlify.app/)**
+> ### ▶️ **[Live demo → starring-you.netlify.app](https://starring-you.netlify.app/)**
 >
 > Try it: pick a profile, search the catalog, add titles to **My List**, hit **Play** to start **Continue Watching**, and open a series to see **Episodes** + **More Like This**.
 
@@ -15,9 +15,9 @@ A polished, full-featured Netflix UI clone built with **Next.js 16 (App Router)*
 
 ## ✨ What makes this different
 
-Most Netflix clones are a static UI over the TMDB API. This one adds a twist: a row of **10 original titles that star _you_**. Each poster + wide backdrop is **generated at build time** from a single headshot using an image-processing pipeline (`sharp`) — color-graded per genre, framed with title typography, a tagline, a star credit, and a scrim, then composited onto themed artwork.
+Unlike a static streaming-UI demo, this project includes a **build-time image-processing pipeline** (using [`sharp`](https://sharp.pixelplumbing.com/)) that generates custom **posters and wide backdrops from a headshot**. Each title is color-graded per genre, framed with title typography, a tagline and a star credit, then composited into genre-specific artwork — creating a personalized catalog that can be regenerated for **any** user.
 
-It also ships a **second pipeline** that frames AI-generated scene images (one per title) into finished posters, so you can drop in "you as a Viking / sci-fi hero / noir detective" and the app reframes them automatically.
+A second pipeline frames **AI-generated scene images** (one per title) into finished posters, so you can drop in "you as a pirate / sci-fi hero / noir detective" and the app reframes them automatically.
 
 <table>
   <tr>
@@ -29,7 +29,7 @@ It also ships a **second pipeline** that frames AI-generated scene images (one p
   </tr>
 </table>
 
-> _Replace the photo in `public/` and re-run the generator to make the catalog star anyone._
+> _Swap the photo in `public/` and re-run the generator to make the catalog star anyone._
 
 ---
 
@@ -39,7 +39,7 @@ It also ships a **second pipeline** that frames AI-generated scene images (one p
 - Billboard **hero** with Play / More Info
 - Horizontally scrollable **content rows** with hover arrows and **arrow-key** navigation
 - **Hover cards** that expand to reveal quick actions (▶ Play, ➕ My List, 👍) and metadata
-- **Top 10 Today** row with the signature oversized rank numerals
+- **Top 10 Today** row with oversized rank numerals
 - Poster **shimmer placeholders** while images load
 
 **Search & My List**
@@ -52,7 +52,7 @@ It also ships a **second pipeline** that frames AI-generated scene images (one p
 - **Continue Watching** row with real **progress bars** — the player tracks your position and **resumes** where you left off
 
 **Detail modal**
-- In-modal **trailer player** with **mute/unmute** (YouTube embed in TMDB mode, sample clip in demo mode)
+- In-modal **trailer player** with **mute/unmute**
 - **Episodes** list with a season selector for series
 - **More Like This** grid (genre-matched) — click to dive into a related title
 - **Focus-trapped** and keyboard accessible (Esc to close)
@@ -74,6 +74,7 @@ It also ships a **second pipeline** that frames AI-generated scene images (one p
 | **Image pipeline** | `sharp` (SVG → PNG compositing, color grading, masks) |
 | **State** | React Context + `localStorage` (My List, profiles, Continue Watching) |
 | **Data** | Bundled mock catalog, optional TMDB REST API |
+| **Hosting** | Netlify |
 
 ---
 
@@ -106,18 +107,18 @@ node scripts/generate-starring.mjs    # composites YOUR photo into 10 genre post
 1. **stylizes a headshot** (`public/headshot-*.png`) with per-genre transforms — comic ink, cyan hologram, noir, glitch, pop-art, sepia, etc. — feathered onto themed backgrounds; **or**
 2. **frames a drop-in image** from `public/starring/source/<slug>.png` (e.g. an AI-generated scene) into a finished poster.
 
-Posters carry the title art (used on cards); the wide backdrops are kept text-free so the hero/modal can overlay their own UI — exactly how Netflix does it. See [`STARRING-PROMPTS.md`](STARRING-PROMPTS.md) for ready-to-paste AI prompts per title.
+Posters carry the title art (used on cards); the wide backdrops are kept text-free so the hero/modal can overlay their own UI. See [`STARRING-PROMPTS.md`](STARRING-PROMPTS.md) for ready-to-paste AI prompts per title.
 
 ---
 
 ## 🎞️ Optional: real data from TMDB
 
-Demo mode uses the bundled catalog. To pull live artwork and trailers:
+The app runs on a bundled catalog by default. To pull live artwork and trailers:
 
 1. Create a free account at [themoviedb.org](https://www.themoviedb.org/).
 2. Grab an API key (v3 auth) from [Settings → API](https://www.themoviedb.org/settings/api).
 3. Copy `.env.local.example` to `.env.local` and set `TMDB_API_KEY=your_key`.
-4. Restart the dev server. The app fetches real rows and **falls back to mock data** on any error.
+4. Restart the dev server. The app fetches real rows and **falls back to the bundled catalog** on any error.
 
 ---
 
@@ -141,7 +142,7 @@ src/
     TitleModal · EpisodesSection · MoreLikeThis
   lib/
     types · mockData · originalsData · starringData
-    content.ts          getHomeData() — TMDB with mock fallback (server-only)
+    content.ts          getHomeData() — TMDB with bundled fallback (server-only)
     tmdb.ts             Optional TMDB integration
     images.ts           Image URLs + deterministic gradient posters
     episodes.ts         Mock episode generation for series
@@ -153,5 +154,4 @@ scripts/
 
 ## 📝 Notes
 
-- Personal/portfolio project — **not affiliated with Netflix, Inc.** All title names are fictional.
-- Trailer playback in demo mode uses a public-domain sample clip.
+This is a personal portfolio project inspired by modern streaming-platform interfaces. It is **not affiliated with, endorsed by, or connected to any streaming company**. All title names and generated artwork are fictional.

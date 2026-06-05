@@ -35,7 +35,7 @@ export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType
   return (
     <main className="flex-1">
       <Hero title={hero} />
-      {/* Rows pulled up to overlap the hero's bottom fade, like Netflix */}
+      {/* Rows pulled up to overlap the hero's bottom fade */}
       <div className="relative z-10 -mt-16 space-y-8 pb-8 sm:-mt-24">
         <ContinueRow />
         <MyListRow />
