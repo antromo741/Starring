@@ -13,8 +13,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Netflix Clone",
-  description: "A Netflix UI clone built with Next.js, React and Tailwind CSS.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: { default: "Netflix Clone", template: "%s · Netflix Clone" },
+  description:
+    "A Netflix UI clone built with Next.js, React and Tailwind CSS — with a personalized 'Starring You' catalog, search, My List, profiles and Continue Watching.",
+  openGraph: {
+    title: "Netflix Clone",
+    description: "A personalized Netflix-style streaming UI built with Next.js.",
+    type: "website",
+    images: [{ url: "/starring/redbeard-wide.png", width: 1280, height: 720, alt: "Netflix Clone" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Netflix Clone",
+    description: "A personalized Netflix-style streaming UI built with Next.js.",
+    images: ["/starring/redbeard-wide.png"],
+  },
 };
 
 export default function RootLayout({

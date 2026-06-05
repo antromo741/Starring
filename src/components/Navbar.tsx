@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useCatalog } from "./CatalogProvider";
+import { useProfile, ProfileAvatar } from "./ProfileProvider";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { query, setQuery, searchOpen, setSearchOpen } = useCatalog();
+  const { current, openGate } = useProfile();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -42,11 +45,19 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
-        scrolled || expanded ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 to-transparent"
+        scrolled || expanded || menuOpen ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 to-transparent"
       }`}
     >
       <nav className="flex items-center justify-between px-4 py-3 sm:px-8">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 sm:gap-8">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Menu"
+            aria-expanded={menuOpen}
+            className="lg:hidden"
+          >
+            <MenuIcon className="h-6 w-6" />
+          </button>
           <button
             onClick={() => onLink("Home")}
             className="select-none text-2xl font-extrabold tracking-tight text-netflix sm:text-3xl"
@@ -106,10 +117,44 @@ export default function Navbar() {
 
           <span className="hidden cursor-pointer text-sm sm:inline">Kids</span>
           <BellIcon className="hidden h-5 w-5 cursor-pointer sm:block" />
-          <div className="h-8 w-8 cursor-pointer overflow-hidden rounded bg-gradient-to-br from-red-500 to-orange-400" />
+          <button
+            onClick={openGate}
+            aria-label="Switch profile"
+            title={`${current.name} — switch profiles`}
+            className="overflow-hidden rounded"
+          >
+            <ProfileAvatar profile={current} className="h-8 w-8 rounded text-sm" />
+          </button>
         </div>
       </nav>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <ul className="border-t border-neutral-800 bg-[#141414] px-4 py-2 lg:hidden">
+          {LINKS.map((link) => (
+            <li key={link}>
+              <button
+                onClick={() => {
+                  onLink(link);
+                  setMenuOpen(false);
+                }}
+                className="block w-full py-2 text-left text-neutral-200 transition hover:text-white"
+              >
+                {link}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </header>
+  );
+}
+
+function MenuIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
   );
 }
 

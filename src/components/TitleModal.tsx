@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useModal } from "./ModalProvider";
 import { useCatalog } from "./CatalogProvider";
 import { backdropSrc, posterGradient } from "@/lib/images";
+import { isSeries } from "@/lib/episodes";
+import EpisodesSection from "./EpisodesSection";
+import MoreLikeThis from "./MoreLikeThis";
 import type { Title } from "@/lib/types";
 
 export default function TitleModal() {
@@ -32,8 +35,45 @@ function TitleModalContent({
   autoPlay: boolean;
 }) {
   const [playing, setPlaying] = useState(autoPlay);
-  const { inList, toggleList } = useCatalog();
+  const [muted, setMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const lastSaveRef = useRef(0);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const { inList, toggleList, getProgress, recordProgress } = useCatalog();
   const saved = inList(active.id);
+
+  // Keep the <video> element's muted property in sync (React won't update it via attribute alone).
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.muted = muted;
+  }, [muted, playing]);
+
+  // Focus trap: focus the dialog on open, keep Tab inside it, restore focus on close.
+  useEffect(() => {
+    const prevFocused = document.activeElement as HTMLElement | null;
+    const root = dialogRef.current;
+    root?.focus();
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !root) return;
+      const items = root.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onTab);
+    return () => {
+      document.removeEventListener("keydown", onTab);
+      prevFocused?.focus?.();
+    };
+  }, []);
 
   // Lock body scroll + close on Escape while the modal is open.
   useEffect(() => {
@@ -58,7 +98,9 @@ function TitleModalContent({
       aria-label={active.name}
     >
       <div
-        className="relative my-auto w-full max-w-3xl overflow-hidden rounded-lg bg-[#181818] shadow-2xl animate-scale-in"
+        ref={dialogRef}
+        tabIndex={-1}
+        className="relative my-auto w-full max-w-3xl overflow-hidden rounded-lg bg-[#181818] shadow-2xl outline-none animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Banner / player */}
@@ -73,13 +115,37 @@ function TitleModalContent({
                 allowFullScreen
               />
             ) : (
-              <video
-                className="h-full w-full bg-black"
-                src={active.videoUrl}
-                controls
-                autoPlay
-                playsInline
-              />
+              <>
+                <video
+                  ref={videoRef}
+                  className="h-full w-full bg-black"
+                  src={active.videoUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  muted={muted}
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    const p = getProgress(active.id);
+                    if (p > 0 && p < 0.95 && v.duration) v.currentTime = p * v.duration;
+                  }}
+                  onTimeUpdate={(e) => {
+                    const v = e.currentTarget;
+                    const now = Date.now();
+                    if (v.duration && now - lastSaveRef.current > 2000) {
+                      lastSaveRef.current = now;
+                      recordProgress(active, v.currentTime / v.duration);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => setMuted((m) => !m)}
+                  aria-label={muted ? "Unmute" : "Mute"}
+                  className="absolute right-16 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-black/50 text-white transition hover:border-white"
+                >
+                  {muted ? <MutedIcon className="h-4 w-4" /> : <SoundIcon className="h-4 w-4" />}
+                </button>
+              </>
             )
           ) : (
             <>
@@ -168,6 +234,16 @@ function TitleModalContent({
               {active.genres.join(", ")}
             </p>
           )}
+
+          {isSeries(active) && (
+            <div className="pt-4">
+              <EpisodesSection title={active} onPlay={() => setPlaying(true)} />
+            </div>
+          )}
+
+          <div className="pt-4">
+            <MoreLikeThis active={active} />
+          </div>
         </div>
       </div>
     </div>
@@ -228,6 +304,20 @@ function CloseIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
       <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+function MutedIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6" />
+    </svg>
+  );
+}
+function SoundIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13" />
     </svg>
   );
 }

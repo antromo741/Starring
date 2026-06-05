@@ -6,11 +6,32 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import type { Title } from "@/lib/types";
+import { useProfile } from "./ProfileProvider";
 
-const STORAGE_KEY = "netflix-clone:my-list";
+const myListKey = (pid: string) => `netflix-clone:my-list:${pid}`;
+const continueKey = (pid: string) => `netflix-clone:continue:${pid}`;
+
+function readJSON<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function writeJSON(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+type ContinueMap = Record<number, { p: number; t: number }>;
 
 interface CatalogContextValue {
   allTitles: Title[];
@@ -20,10 +41,14 @@ interface CatalogContextValue {
   searchOpen: boolean;
   setSearchOpen: (v: boolean) => void;
   results: Title[];
-  // My List (persisted to localStorage)
+  // My List (per profile, persisted)
   myList: Title[];
   inList: (id: number) => boolean;
   toggleList: (t: Title) => void;
+  // Continue Watching (per profile, persisted)
+  continueList: { title: Title; progress: number }[];
+  getProgress: (id: number) => number;
+  recordProgress: (t: Title, progress: number) => void;
 }
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
@@ -41,31 +66,29 @@ export default function CatalogProvider({
   allTitles: Title[];
   children: React.ReactNode;
 }) {
+  const profileId = useProfile().current.id;
+
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [listIds, setListIds] = useState<number[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [cont, setCont] = useState<ContinueMap>({});
 
-  // Load the saved list once on mount (client only, avoids hydration mismatch).
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setListIds(JSON.parse(raw) as number[]);
-    } catch {
-      /* ignore malformed storage */
-    }
-    setHydrated(true);
-  }, []);
+  // Refs mirror state so mutators can persist immediately without effect races
+  // (important when switching profiles, which swaps the storage keys).
+  const listRef = useRef<number[]>([]);
+  const contRef = useRef<ContinueMap>({});
 
-  // Persist on change, but only after the initial load.
+  // (Re)load both lists whenever the active profile changes.
   useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(listIds));
-    } catch {
-      /* storage may be unavailable (private mode, etc.) */
-    }
-  }, [listIds, hydrated]);
+    const ids = readJSON<number[]>(myListKey(profileId), []);
+    const c = readJSON<ContinueMap>(continueKey(profileId), {});
+    listRef.current = ids;
+    contRef.current = c;
+    /* eslint-disable react-hooks/set-state-in-effect -- load persisted per-profile lists after mount/profile change */
+    setListIds(ids);
+    setCont(c);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [profileId]);
 
   const byId = useMemo(() => {
     const m = new Map<number, Title>();
@@ -75,16 +98,46 @@ export default function CatalogProvider({
 
   const inList = useCallback((id: number) => listIds.includes(id), [listIds]);
 
-  const toggleList = useCallback((t: Title) => {
-    setListIds((prev) =>
-      prev.includes(t.id) ? prev.filter((x) => x !== t.id) : [t.id, ...prev],
-    );
-  }, []);
+  const toggleList = useCallback(
+    (t: Title) => {
+      const prev = listRef.current;
+      const next = prev.includes(t.id) ? prev.filter((x) => x !== t.id) : [t.id, ...prev];
+      listRef.current = next;
+      setListIds(next);
+      writeJSON(myListKey(profileId), next);
+    },
+    [profileId],
+  );
 
-  // Newest-added first; drop any ids that are no longer in the catalog.
+  const getProgress = useCallback((id: number) => cont[id]?.p ?? 0, [cont]);
+
+  const recordProgress = useCallback(
+    (t: Title, progress: number) => {
+      if (!Number.isFinite(progress) || progress <= 0) return;
+      const next: ContinueMap = { ...contRef.current, [t.id]: { p: Math.min(1, progress), t: Date.now() } };
+      contRef.current = next;
+      setCont(next);
+      writeJSON(continueKey(profileId), next);
+    },
+    [profileId],
+  );
+
   const myList = useMemo(
     () => listIds.map((id) => byId.get(id)).filter((t): t is Title => Boolean(t)),
     [listIds, byId],
+  );
+
+  const continueList = useMemo(
+    () =>
+      Object.entries(cont)
+        .map(([id, v]) => ({ title: byId.get(Number(id)), progress: v.p, t: v.t }))
+        .filter(
+          (x): x is { title: Title; progress: number; t: number } =>
+            Boolean(x.title) && x.progress > 0.02 && x.progress < 0.95,
+        )
+        .sort((a, b) => b.t - a.t)
+        .map(({ title, progress }) => ({ title, progress })),
+    [cont, byId],
   );
 
   const results = useMemo(() => {
@@ -104,8 +157,21 @@ export default function CatalogProvider({
   }, [query, allTitles]);
 
   const value = useMemo<CatalogContextValue>(
-    () => ({ allTitles, query, setQuery, searchOpen, setSearchOpen, results, myList, inList, toggleList }),
-    [allTitles, query, searchOpen, results, myList, inList, toggleList],
+    () => ({
+      allTitles,
+      query,
+      setQuery,
+      searchOpen,
+      setSearchOpen,
+      results,
+      myList,
+      inList,
+      toggleList,
+      continueList,
+      getProgress,
+      recordProgress,
+    }),
+    [allTitles, query, searchOpen, results, myList, inList, toggleList, continueList, getProgress, recordProgress],
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

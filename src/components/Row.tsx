@@ -4,7 +4,13 @@ import { useRef } from "react";
 import type { Row as RowType } from "@/lib/types";
 import Card from "./Card";
 
-export default function Row({ row }: { row: RowType }) {
+export default function Row({
+  row,
+  progressById,
+}: {
+  row: RowType;
+  progressById?: Record<number, number>;
+}) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
@@ -12,6 +18,20 @@ export default function Row({ row }: { row: RowType }) {
     if (!el) return;
     const amount = el.clientWidth * 0.8;
     el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
+
+  // Arrow-key navigation between cards within the row.
+  const onTrackKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const track = trackRef.current;
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll<HTMLElement>('[role="button"]'));
+    const idx = cards.indexOf(document.activeElement as HTMLElement);
+    if (idx === -1) return;
+    e.preventDefault();
+    const next = e.key === "ArrowRight" ? Math.min(cards.length - 1, idx + 1) : Math.max(0, idx - 1);
+    cards[next]?.focus();
+    cards[next]?.scrollIntoView({ inline: "nearest", block: "nearest", behavior: "smooth" });
   };
 
   return (
@@ -32,10 +52,11 @@ export default function Row({ row }: { row: RowType }) {
 
         <div
           ref={trackRef}
+          onKeyDown={onTrackKeyDown}
           className="no-scrollbar flex gap-2 overflow-x-auto scroll-px-4 px-4 py-2 sm:gap-3 sm:px-8"
         >
           {row.items.map((title) => (
-            <Card key={title.id} title={title} />
+            <Card key={title.id} title={title} progress={progressById?.[title.id]} />
           ))}
         </div>
 
