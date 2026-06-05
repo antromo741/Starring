@@ -2,7 +2,9 @@
 
 A polished, full-featured Netflix UI clone built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4** — featuring a **personalized "Starring You" catalog** whose movie posters are generated programmatically from a real photo.
 
-> **▶️ Live demo:** _coming soon (deploying to Vercel)_
+> ### ▶️ **[Live demo → anthonynetclone.netlify.app](https://anthonynetclone.netlify.app/)**
+>
+> Try it: pick a profile, search the catalog, add titles to **My List**, hit **Play** to start **Continue Watching**, and open a series to see **Episodes** + **More Like This**.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-149eca?logo=react)
