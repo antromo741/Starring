@@ -1,0 +1,13 @@
+# Netlify configuration for this Next.js 16 app.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Next.js 16 needs a modern Node; pin it so Netlify doesn't use an older default.
+  NODE_VERSION = "22"
+
+# Netlify's official Next.js runtime — handles the App Router, server rendering
+# and next/image. Netlify auto-installs this when listed here.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
