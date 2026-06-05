@@ -187,7 +187,7 @@ function TitleModalContent({
                     Play
                   </button>
                   <CircleButton
-                    label={saved ? "Remove from My List" : "Add to My List"}
+                    label={saved ? "Remove from Watchlist" : "Add to Watchlist"}
                     onClick={() => toggleList(active)}
                   >
                     {saved ? <CheckIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}

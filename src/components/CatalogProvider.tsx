@@ -41,7 +41,7 @@ interface CatalogContextValue {
   searchOpen: boolean;
   setSearchOpen: (v: boolean) => void;
   results: Title[];
-  // My List (per profile, persisted)
+  // Watchlist (per profile, persisted)
   myList: Title[];
   inList: (id: number) => boolean;
   toggleList: (t: Title) => void;

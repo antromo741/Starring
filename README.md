@@ -1,10 +1,10 @@
 # ★ Starring — Personalized Streaming Catalog
 
-A polished, full-featured **streaming catalog app** built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4** — including profile selection, searchable content rows, persistent **My List**, **Continue Watching** progress, detail modals, keyboard-accessible interactions, and a personalized **"Starring You"** catalog generated from a single photo.
+A polished, full-featured **streaming catalog app** built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4** — including profile selection, searchable content rows, persistent **Watchlist**, **Continue Watching** progress, detail modals, keyboard-accessible interactions, and a personalized **"Starring You"** catalog generated from a single photo.
 
 > ### ▶️ **[Live demo → starring-you.netlify.app](https://starring-you.netlify.app/)**
 >
-> Try it: pick a profile, search the catalog, add titles to **My List**, hit **Play** to start **Continue Watching**, and open a series to see **Episodes** + **More Like This**.
+> Try it: pick a profile, search the catalog, add titles to **Watchlist**, hit **Play** to start **Continue Watching**, and open a series to see **Episodes** + **More Like This**.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-149eca?logo=react)
@@ -29,7 +29,7 @@ A second pipeline frames **AI-generated scene images** (one per title) into fini
   </tr>
 </table>
 
-> _Swap the photo in `public/` and re-run the generator to make the catalog star anyone._
+> _The "Starring You" row in the [live demo](https://starring-you.netlify.app/) is generated from my own headshot. Swap the photo in `public/` and re-run the generator to re-cast the whole catalog around anyone._
 
 ---
 
@@ -38,17 +38,17 @@ A second pipeline frames **AI-generated scene images** (one per title) into fini
 **Browse**
 - Billboard **hero** with Play / More Info
 - Horizontally scrollable **content rows** with hover arrows and **arrow-key** navigation
-- **Hover cards** that expand to reveal quick actions (▶ Play, ➕ My List, 👍) and metadata
+- **Hover cards** that expand to reveal quick actions (▶ Play, ➕ Watchlist, 👍) and metadata
 - **Top 10 Today** row with oversized rank numerals
 - Poster **shimmer placeholders** while images load
 
-**Search & My List**
+**Search & Watchlist**
 - Live **search** filtering the whole catalog by title or genre
-- **My List** add/remove from any card or the modal, **persisted to `localStorage`**
+- **Watchlist** add/remove from any card or the modal, **persisted to `localStorage`**
 
 **Profiles & Continue Watching**
 - **"Who's watching?"** profile gate; switch profiles from the navbar
-- My List and Continue Watching are **per-profile**
+- Watchlist and Continue Watching are **per-profile**
 - **Continue Watching** row with real **progress bars** — the player tracks your position and **resumes** where you left off
 
 **Detail modal**
@@ -72,7 +72,7 @@ A second pipeline frames **AI-generated scene images** (one per title) into fini
 | **UI** | React 19, Tailwind CSS v4 |
 | **Language** | TypeScript |
 | **Image pipeline** | `sharp` (SVG → PNG compositing, color grading, masks) |
-| **State** | React Context + `localStorage` (My List, profiles, Continue Watching) |
+| **State** | React Context + `localStorage` (Watchlist, profiles, Continue Watching) |
 | **Data** | Bundled mock catalog, optional TMDB REST API |
 | **Hosting** | Netlify |
 
@@ -134,7 +134,7 @@ src/
     globals.css         Tailwind theme + animations + shimmer
   components/
     ProfileProvider     "Who's watching?" gate + per-profile context
-    CatalogProvider     Search + My List + Continue Watching (localStorage)
+    CatalogProvider     Search + Watchlist + Continue Watching (localStorage)
     ModalProvider       App-wide detail modal
     Navbar · Hero · Row · Top10Row · Card · Footer
     HomeContent         Browse-vs-search shell

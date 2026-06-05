@@ -33,14 +33,14 @@ export default function Navbar() {
   // Nav links double as quick filters / jumps.
   const onLink = (link: string) => {
     clearSearch();
-    if (link === "My List") {
+    if (link === "Watchlist") {
       document.getElementById("my-list")?.scrollIntoView({ behavior: "smooth" });
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "My List"];
+  const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "Watchlist"];
 
   return (
     <header

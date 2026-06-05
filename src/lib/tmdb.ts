@@ -84,7 +84,7 @@ export async function fetchTrailerKey(id: number, kind: "movie" | "tv"): Promise
 
 export async function getTmdbHome(): Promise<{ hero: Title; rows: Row[] }> {
   const rows = await Promise.all([
-    fetchRow("Trending Now", "/trending/all/week"),
+    fetchRow("New Releases", "/trending/all/week"),
     fetchRow("Starring Originals", "/discover/tv", { with_networks: "213", sort_by: "popularity.desc" }),
     fetchRow("Popular on Starring", "/movie/popular"),
     fetchRow("Action & Adventure", "/discover/movie", { with_genres: "28", sort_by: "popularity.desc" }),

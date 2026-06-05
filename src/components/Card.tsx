@@ -77,8 +77,8 @@ export default function Card({ title, progress }: { title: Title; progress?: num
           </button>
           <button
             onClick={(e) => { stop(e); toggleList(title); }}
-            aria-label={saved ? "Remove from My List" : "Add to My List"}
-            title={saved ? "Remove from My List" : "Add to My List"}
+            aria-label={saved ? "Remove from Watchlist" : "Add to Watchlist"}
+            title={saved ? "Remove from Watchlist" : "Add to Watchlist"}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 bg-black/50 text-white transition hover:border-white"
           >
             {saved ? <CheckIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}

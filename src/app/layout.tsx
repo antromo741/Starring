@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   ),
   title: { default: "Starring — Personalized Streaming Catalog", template: "%s · Starring" },
   description:
-    "A personalized streaming catalog app built with Next.js, React and Tailwind CSS — with a build-time 'Starring You' poster pipeline, search, My List, profiles and Continue Watching.",
+    "A personalized streaming catalog app built with Next.js, React and Tailwind CSS — with a build-time 'Starring You' poster pipeline, search, Watchlist, profiles and Continue Watching.",
   openGraph: {
     title: "Starring — Personalized Streaming Catalog",
     description: "A personalized streaming catalog app with an AI-driven poster pipeline, built with Next.js.",

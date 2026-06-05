@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 export default async function Home() {
   const { hero, rows, source } = await getHomeData();
 
-  // Flatten + de-duplicate every title so search and "My List" can look any up.
+  // Flatten + de-duplicate every title so search and "Watchlist" can look any up.
   const seen = new Set<number>();
   const allTitles: Title[] = [];
   for (const t of [hero, ...rows.flatMap((r) => r.items)]) {

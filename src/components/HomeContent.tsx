@@ -39,7 +39,7 @@ export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType
       <div className="relative z-10 -mt-16 space-y-8 pb-8 sm:-mt-24">
         <ContinueRow />
         <MyListRow />
-        {top10 && <Top10Row title="Top 10 Today" items={top10.items} />}
+        {top10 && <Top10Row title="Trending Today" items={top10.items} />}
         {rows.map((row) => (
           <Row key={row.id} row={row} />
         ))}
