@@ -10,7 +10,7 @@ export default function Hero({ title }: { title: Title }) {
   const backdrop = backdropSrc(title, "original");
 
   return (
-    <section className="relative h-[70vh] min-h-[480px] w-full">
+    <section className="relative h-[60svh] min-h-[440px] w-full sm:h-[70vh] sm:min-h-[480px]">
       {/* Background */}
       {backdrop ? (
         <Image
@@ -19,19 +19,19 @@ export default function Hero({ title }: { title: Title }) {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-top"
+          className="object-cover object-[72%_50%] sm:object-top"
         />
       ) : (
         <div className="absolute inset-0" style={{ background: posterGradient(title.name) }} />
       )}
 
-      {/* Legibility gradients */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent" />
+      {/* Legibility gradient: bottom-up on mobile (content sits low), left→right on desktop */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent sm:bg-gradient-to-r sm:from-black/80 sm:via-black/30 sm:to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#141414] to-transparent" />
 
       {/* Content */}
-      <div className="absolute bottom-[18%] left-4 max-w-xl space-y-4 sm:left-8">
-        <h1 className="text-4xl font-extrabold drop-shadow-2xl sm:text-6xl">{title.name}</h1>
+      <div className="absolute bottom-[12%] left-4 right-4 max-w-xl space-y-4 sm:bottom-[18%] sm:left-8 sm:right-auto">
+        <h1 className="text-3xl font-extrabold drop-shadow-2xl sm:text-6xl">{title.name}</h1>
         <div className="flex items-center gap-3 text-sm">
           <span className="font-semibold text-green-500">{title.matchPct}% Match</span>
           <span className="text-neutral-200">{title.year}</span>
@@ -43,7 +43,7 @@ export default function Hero({ title }: { title: Title }) {
         <p className="line-clamp-3 max-w-lg text-sm text-neutral-200 drop-shadow-lg sm:text-base">
           {title.overview}
         </p>
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
             onClick={() => open(title, true)}
             className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-semibold text-black transition hover:bg-white/80"

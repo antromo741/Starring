@@ -11,7 +11,6 @@ export default function Card({ title, progress }: { title: Title; progress?: num
   const { open } = useModal();
   const { inList, toggleList } = useCatalog();
   const [broken, setBroken] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const poster = posterSrc(title);
   const showImage = poster && !broken;
   const saved = inList(title.id);
@@ -35,14 +34,14 @@ export default function Card({ title, progress }: { title: Title; progress?: num
     >
       {showImage ? (
         <>
-          {!loaded && <div className="skeleton absolute inset-0" />}
+          {/* Shimmer sits behind; the poster paints over it once loaded */}
+          <div className="skeleton absolute inset-0" />
           <Image
             src={poster}
             alt={title.name}
             fill
             sizes="180px"
-            className={`object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
-            onLoad={() => setLoaded(true)}
+            className="object-cover"
             onError={() => setBroken(true)}
           />
         </>

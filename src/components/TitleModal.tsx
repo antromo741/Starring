@@ -91,7 +91,7 @@ function TitleModalContent({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/70 px-4 py-8 animate-fade-in"
+      className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/70 p-0 animate-fade-in sm:px-4 sm:py-8"
       onClick={close}
       role="dialog"
       aria-modal="true"
@@ -100,7 +100,7 @@ function TitleModalContent({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative my-auto w-full max-w-3xl overflow-hidden rounded-lg bg-[#181818] shadow-2xl outline-none animate-scale-in"
+        className="relative min-h-full w-full overflow-hidden bg-[#181818] shadow-2xl outline-none animate-scale-in sm:my-auto sm:min-h-0 sm:max-w-3xl sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Banner / player */}
@@ -211,7 +211,7 @@ function TitleModalContent({
         </div>
 
         {/* Details */}
-        <div className="space-y-4 p-6 sm:p-8">
+        <div className="space-y-4 p-4 sm:p-8">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
             <span className="font-semibold text-green-500">{active.matchPct}% Match</span>
             <span className="text-neutral-300">{active.year}</span>

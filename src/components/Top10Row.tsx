@@ -18,7 +18,7 @@ export default function Top10Row({ title, items }: { title: string; items: Title
               aria-hidden
               className="select-none font-black leading-none"
               style={{
-                fontSize: "clamp(5.5rem, 16vw, 9rem)",
+                fontSize: "clamp(4rem, 13vw, 9rem)",
                 color: "#141414",
                 WebkitTextStroke: "3px #5b616b",
                 marginRight: i === 9 ? "-0.6rem" : "-1.4rem",

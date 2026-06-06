@@ -54,7 +54,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Menu"
             aria-expanded={menuOpen}
-            className="lg:hidden"
+            className="-m-1 p-1 lg:hidden"
           >
             <MenuIcon className="h-6 w-6" />
           </button>
@@ -92,7 +92,7 @@ export default function Navbar() {
             <button
               onClick={expanded ? () => inputRef.current?.focus() : openSearch}
               aria-label="Search"
-              className="text-white"
+              className="-m-1 p-1 text-white"
             >
               <SearchIcon className="h-5 w-5 cursor-pointer" />
             </button>
@@ -105,7 +105,7 @@ export default function Navbar() {
               placeholder="Titles, genres"
               aria-label="Search titles"
               className={`bg-transparent text-sm text-white placeholder:text-neutral-400 focus:outline-none ${
-                expanded ? "w-36 sm:w-52" : "w-0"
+                expanded ? "w-28 sm:w-52" : "w-0"
               } transition-all`}
             />
             {expanded && query.length > 0 && (

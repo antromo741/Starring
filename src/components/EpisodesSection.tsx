@@ -45,7 +45,7 @@ export default function EpisodesSection({
               className="group flex w-full items-center gap-4 py-4 text-left transition hover:bg-white/5"
             >
               <span className="w-5 shrink-0 text-center text-lg text-neutral-400">{ep.number}</span>
-              <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded">
+              <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded sm:w-28">
                 {ep.thumb ? (
                   <Image src={ep.thumb} alt={ep.name} fill sizes="112px" className="object-cover" />
                 ) : (
