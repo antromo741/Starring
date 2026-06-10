@@ -6,10 +6,12 @@ import type { Title } from "@/lib/types";
 import { posterSrc, posterGradient } from "@/lib/images";
 import { useModal } from "./ModalProvider";
 import { useCatalog } from "./CatalogProvider";
+import { useToast } from "./ToastProvider";
 
 export default function Card({ title, progress }: { title: Title; progress?: number }) {
   const { open } = useModal();
   const { inList, toggleList } = useCatalog();
+  const { toast } = useToast();
   const [broken, setBroken] = useState(false);
   const poster = posterSrc(title);
   const showImage = poster && !broken;
@@ -75,7 +77,11 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             <PlayIcon className="h-3.5 w-3.5" />
           </button>
           <button
-            onClick={(e) => { stop(e); toggleList(title); }}
+            onClick={(e) => {
+              stop(e);
+              toggleList(title);
+              toast(saved ? "Removed from Watchlist" : "Added to Watchlist", saved ? "minus" : "check");
+            }}
             aria-label={saved ? "Remove from Watchlist" : "Add to Watchlist"}
             title={saved ? "Remove from Watchlist" : "Add to Watchlist"}
             className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 bg-black/50 text-white transition hover:border-white"

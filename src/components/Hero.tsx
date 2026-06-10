@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import type { Title } from "@/lib/types";
 import { backdropSrc, posterGradient } from "@/lib/images";
 import { useModal } from "./ModalProvider";
@@ -44,20 +45,22 @@ export default function Hero({ title }: { title: Title }) {
           {title.overview}
         </p>
         <div className="flex flex-wrap items-center gap-3 pt-2">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.94 }}
             onClick={() => open(title, true)}
             className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-semibold text-black transition hover:bg-white/80"
           >
             <PlayIcon className="h-5 w-5" />
             Play
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.94 }}
             onClick={() => open(title)}
             className="flex items-center gap-2 rounded bg-neutral-500/60 px-6 py-2.5 font-semibold text-white transition hover:bg-neutral-500/40"
           >
             <InfoIcon className="h-5 w-5" />
             More Info
-          </button>
+          </motion.button>
         </div>
       </div>
     </section>

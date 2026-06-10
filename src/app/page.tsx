@@ -2,6 +2,7 @@ import { getHomeData } from "@/lib/content";
 import type { Title } from "@/lib/types";
 import ProfileProvider from "@/components/ProfileProvider";
 import CatalogProvider from "@/components/CatalogProvider";
+import ToastProvider from "@/components/ToastProvider";
 import ModalProvider from "@/components/ModalProvider";
 import Navbar from "@/components/Navbar";
 import HomeContent from "@/components/HomeContent";
@@ -23,11 +24,13 @@ export default async function Home() {
   return (
     <ProfileProvider>
       <CatalogProvider allTitles={allTitles}>
-        <ModalProvider>
-          <Navbar />
-          <HomeContent hero={hero} rows={rows} />
-          <Footer demoMode={source === "mock"} />
-        </ModalProvider>
+        <ToastProvider>
+          <ModalProvider>
+            <Navbar />
+            <HomeContent hero={hero} rows={rows} />
+            <Footer demoMode={source === "mock"} />
+          </ModalProvider>
+        </ToastProvider>
       </CatalogProvider>
     </ProfileProvider>
   );

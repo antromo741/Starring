@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { useModal } from "./ModalProvider";
 import { useCatalog } from "./CatalogProvider";
+import { useToast } from "./ToastProvider";
 import { backdropSrc, posterGradient } from "@/lib/images";
 import { isSeries } from "@/lib/episodes";
 import EpisodesSection from "./EpisodesSection";
@@ -40,6 +42,7 @@ function TitleModalContent({
   const lastSaveRef = useRef(0);
   const dialogRef = useRef<HTMLDivElement>(null);
   const { inList, toggleList, getProgress, recordProgress } = useCatalog();
+  const { toast } = useToast();
   const saved = inList(active.id);
 
   // Keep the <video> element's muted property in sync (React won't update it via attribute alone).
@@ -179,16 +182,20 @@ function TitleModalContent({
                   </h2>
                 )}
                 <div className="flex items-center gap-3">
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.94 }}
                     onClick={() => setPlaying(true)}
                     className="flex items-center gap-2 rounded bg-white px-6 py-2 font-semibold text-black transition hover:bg-white/80"
                   >
                     <PlayIcon className="h-5 w-5" />
                     Play
-                  </button>
+                  </motion.button>
                   <CircleButton
                     label={saved ? "Remove from Watchlist" : "Add to Watchlist"}
-                    onClick={() => toggleList(active)}
+                    onClick={() => {
+                      toggleList(active);
+                      toast(saved ? "Removed from Watchlist" : "Added to Watchlist", saved ? "minus" : "check");
+                    }}
                   >
                     {saved ? <CheckIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}
                   </CircleButton>
