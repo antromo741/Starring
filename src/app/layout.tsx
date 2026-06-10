@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -32,6 +32,11 @@ export const metadata: Metadata = {
     description: "A personalized streaming catalog app with an AI-driven poster pipeline, built with Next.js.",
     images: ["/starring/redbeard-wide.png"],
   },
+  icons: { icon: "/favicon.png", apple: "/apple-icon.png" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#141414",
 };
 
 export default function RootLayout({
