@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useCatalog } from "./CatalogProvider";
 import { useProfile, ProfileAvatar } from "./ProfileProvider";
+import PosterStudio from "./PosterStudio";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [studioOpen, setStudioOpen] = useState(false);
   const { query, setQuery, searchOpen, setSearchOpen } = useCatalog();
   const { current, openGate } = useProfile();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +45,7 @@ export default function Navbar() {
   const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "Watchlist"];
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
         scrolled || expanded || menuOpen ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 to-transparent"
@@ -115,7 +118,14 @@ export default function Navbar() {
             )}
           </div>
 
-          <span className="hidden cursor-pointer text-sm sm:inline">Kids</span>
+          <button
+            onClick={() => setStudioOpen(true)}
+            title="Make your own poster"
+            className="flex items-center gap-1.5 rounded-full border border-accent/60 px-2.5 py-1 text-sm font-semibold text-accent transition hover:bg-accent/10"
+          >
+            <span aria-hidden>★</span>
+            <span className="hidden md:inline">Make Yours</span>
+          </button>
           <BellIcon className="hidden h-5 w-5 cursor-pointer sm:block" />
           <button
             onClick={openGate}
@@ -144,9 +154,22 @@ export default function Navbar() {
               </button>
             </li>
           ))}
+          <li>
+            <button
+              onClick={() => {
+                setStudioOpen(true);
+                setMenuOpen(false);
+              }}
+              className="block w-full py-2 text-left font-semibold text-accent"
+            >
+              ★ Make your poster
+            </button>
+          </li>
         </ul>
       )}
     </header>
+    <PosterStudio open={studioOpen} onClose={() => setStudioOpen(false)} />
+    </>
   );
 }
 
