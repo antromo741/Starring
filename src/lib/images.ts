@@ -14,6 +14,13 @@ export function backdropSrc(
   return t.backdropImage ?? imageUrl(t.backdropPath ?? t.posterPath, size);
 }
 
+/** Prefer text-free portrait source art for phone hero crops when available. */
+export function mobileHeroSrc(t: Title): string | undefined {
+  const local = t.backdropImage ?? t.posterImage;
+  const match = local?.match(/^\/starring\/(.+?)(?:-wide)?\.(?:png|jpg|jpeg|webp)$/);
+  return match ? `/starring/source/${match[1]}.png` : undefined;
+}
+
 /** Build a TMDB image URL, or undefined to trigger the gradient poster. */
 export function imageUrl(
   path: string | undefined,

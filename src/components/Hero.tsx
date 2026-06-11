@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { Title } from "@/lib/types";
-import { backdropSrc, posterGradient } from "@/lib/images";
+import { backdropSrc, mobileHeroSrc, posterGradient } from "@/lib/images";
 import { useModal } from "./ModalProvider";
 
 export default function Hero({ title }: { title: Title }) {
   const { open } = useModal();
   const backdrop = backdropSrc(title, "original");
+  const mobileArtwork = mobileHeroSrc(title) ?? backdrop;
+  const desktopArtwork = backdrop ?? mobileArtwork;
 
   const [trailer, setTrailer] = useState(false);
   const [muted, setMuted] = useState(true);
@@ -30,19 +32,29 @@ export default function Hero({ title }: { title: Title }) {
   }, [muted, trailer]);
 
   return (
-    <section className="relative h-[60svh] min-h-[440px] w-full sm:h-[70vh] sm:min-h-[480px]">
+    <section className="relative h-[78svh] min-h-[560px] max-h-[760px] w-full overflow-hidden sm:h-[70vh] sm:min-h-[480px] sm:max-h-none">
       {/* Background */}
-      {backdrop ? (
+      {mobileArtwork ? (
         <Image
-          src={backdrop}
+          src={mobileArtwork}
           alt={title.name}
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[72%_50%] sm:object-top"
+          className="object-cover object-[50%_24%] sm:hidden"
         />
       ) : (
         <div className="absolute inset-0" style={{ background: posterGradient(title.name) }} />
+      )}
+      {desktopArtwork && (
+        <Image
+          src={desktopArtwork}
+          alt={title.name}
+          fill
+          priority
+          sizes="100vw"
+          className="hidden object-cover object-top sm:block"
+        />
       )}
 
       {/* Muted auto-trailer fades in over the image (desktop) */}
@@ -57,18 +69,20 @@ export default function Hero({ title }: { title: Title }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="absolute inset-0 h-full w-full object-cover object-[72%_50%] sm:object-top"
+          className="absolute inset-0 hidden h-full w-full object-cover object-top sm:block"
         />
       )}
 
-      {/* Legibility gradient: bottom-up on mobile (content sits low), left→right on desktop */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent sm:bg-gradient-to-r sm:from-black/80 sm:via-black/30 sm:to-transparent" />
+      {/* Legibility gradients tuned separately for phone portrait art and desktop backdrops. */}
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent sm:hidden" />
+      <div className="absolute inset-x-0 bottom-0 h-[56%] bg-gradient-to-t from-[#141414] via-black/75 to-transparent sm:hidden" />
+      <div className="absolute inset-0 hidden bg-gradient-to-r from-black/80 via-black/30 to-transparent sm:block" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#141414] to-transparent" />
 
       {/* Content */}
-      <div className="absolute bottom-[12%] left-4 right-4 max-w-xl space-y-4 sm:bottom-[18%] sm:left-8 sm:right-auto">
+      <div className="absolute bottom-[7%] left-4 right-4 max-w-[24rem] space-y-3 sm:bottom-[18%] sm:left-8 sm:right-auto sm:max-w-xl sm:space-y-4">
         <h1 className="text-3xl font-extrabold drop-shadow-2xl sm:text-6xl">{title.name}</h1>
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
           <span className="font-semibold text-green-500">{title.matchPct}% Match</span>
           <span className="text-neutral-200">{title.year}</span>
           <span className="rounded border border-neutral-400 px-1.5 text-xs text-neutral-200">
@@ -76,14 +90,14 @@ export default function Hero({ title }: { title: Title }) {
           </span>
           <span className="text-neutral-200">{title.length}</span>
         </div>
-        <p className="line-clamp-3 max-w-lg text-sm text-neutral-200 drop-shadow-lg sm:text-base">
+        <p className="line-clamp-2 max-w-lg text-sm leading-relaxed text-neutral-200 drop-shadow-lg sm:line-clamp-3 sm:text-base">
           {title.overview}
         </p>
-        <div className="flex flex-wrap items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-2 pt-1 sm:gap-3 sm:pt-2">
           <motion.button
             whileTap={{ scale: 0.94 }}
             onClick={() => open(title, true)}
-            className="flex items-center gap-2 rounded bg-white px-6 py-2.5 font-semibold text-black transition hover:bg-white/80"
+            className="flex items-center gap-2 rounded bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/80 sm:px-6 sm:text-base"
           >
             <PlayIcon className="h-5 w-5" />
             Play
@@ -91,7 +105,7 @@ export default function Hero({ title }: { title: Title }) {
           <motion.button
             whileTap={{ scale: 0.94 }}
             onClick={() => open(title)}
-            className="flex items-center gap-2 rounded bg-neutral-500/60 px-6 py-2.5 font-semibold text-white transition hover:bg-neutral-500/40"
+            className="flex items-center gap-2 rounded bg-neutral-500/60 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-500/40 sm:px-6 sm:text-base"
           >
             <InfoIcon className="h-5 w-5" />
             More Info

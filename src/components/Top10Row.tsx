@@ -16,7 +16,7 @@ export default function Top10Row({ title, items }: { title: string; items: Title
           <div key={t.id} className="flex shrink-0 items-center">
             <span
               aria-hidden
-              className="select-none font-black leading-none"
+              className="pointer-events-none select-none font-black leading-none"
               style={{
                 fontSize: "clamp(4rem, 13vw, 9rem)",
                 color: "#141414",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useModal } from "./ModalProvider";
@@ -16,15 +17,16 @@ import type { Title } from "@/lib/types";
 export default function TitleModal() {
   const { active, close, autoPlay } = useModal();
 
-  if (!active) return null;
+  if (!active || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <TitleModalContent
       key={`${active.id}:${autoPlay ? "play" : "details"}`}
       active={active}
       close={close}
       autoPlay={autoPlay}
-    />
+    />,
+    document.body,
   );
 }
 
@@ -95,7 +97,7 @@ function TitleModalContent({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/70 p-0 animate-fade-in sm:px-4 sm:py-8"
+      className="fixed inset-0 z-[80] flex justify-center overflow-y-auto bg-black/70 p-0 animate-fade-in sm:px-4 sm:py-8"
       onClick={close}
       role="dialog"
       aria-modal="true"

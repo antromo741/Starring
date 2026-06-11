@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllTitles, getTitleBySlug } from "@/lib/content";
-import { backdropSrc, posterSrc, posterGradient } from "@/lib/images";
+import { backdropSrc, posterSrc, mobileHeroSrc, posterGradient } from "@/lib/images";
 import { slugify } from "@/lib/slug";
 
 export async function generateStaticParams() {
@@ -43,6 +43,8 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
   if (!title) notFound();
 
   const backdrop = backdropSrc(title, "original");
+  const mobileArtwork = mobileHeroSrc(title) ?? backdrop;
+  const desktopArtwork = backdrop ?? mobileArtwork;
 
   return (
     <main className="min-h-[100svh]">
@@ -52,19 +54,30 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
         </Link>
       </header>
 
-      <div className="relative h-[60svh] min-h-[420px] w-full sm:h-[70vh]">
-        {backdrop ? (
+      <div className="relative h-[70svh] min-h-[520px] w-full overflow-hidden sm:h-[70vh] sm:min-h-[420px]">
+        {mobileArtwork ? (
           <Image
-            src={backdrop}
+            src={mobileArtwork}
             alt={title.name}
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[72%_50%] sm:object-top"
+            className="object-cover object-[50%_24%] sm:hidden"
           />
         ) : (
           <div className="absolute inset-0" style={{ background: posterGradient(title.name) }} />
         )}
+        {desktopArtwork && (
+          <Image
+            src={desktopArtwork}
+            alt={title.name}
+            fill
+            priority
+            sizes="100vw"
+            className="hidden object-cover object-top sm:block"
+          />
+        )}
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent sm:hidden" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/40 to-transparent" />
       </div>
 

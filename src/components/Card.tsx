@@ -17,7 +17,10 @@ export default function Card({ title, progress }: { title: Title; progress?: num
   const showImage = poster && !broken;
   const saved = inList(title.id);
 
-  const openDetails = () => open(title);
+  const openDetails = (e?: React.MouseEvent | React.KeyboardEvent) => {
+    e?.stopPropagation();
+    open(title);
+  };
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
@@ -28,7 +31,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          openDetails();
+          openDetails(e);
         }
       }}
       className="group relative aspect-[2/3] w-[140px] shrink-0 cursor-pointer overflow-hidden rounded-md bg-neutral-800 text-left transition-transform duration-300 hover:z-10 hover:scale-110 hover:shadow-2xl focus:z-10 focus:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-white sm:w-[160px] md:w-[180px]"
