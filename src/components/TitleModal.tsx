@@ -8,6 +8,7 @@ import { useCatalog } from "./CatalogProvider";
 import { useToast } from "./ToastProvider";
 import { backdropSrc, posterGradient } from "@/lib/images";
 import { isSeries } from "@/lib/episodes";
+import { slugify } from "@/lib/slug";
 import EpisodesSection from "./EpisodesSection";
 import MoreLikeThis from "./MoreLikeThis";
 import type { Title } from "@/lib/types";
@@ -202,6 +203,16 @@ function TitleModalContent({
                   <CircleButton label="I like this">
                     <ThumbIcon className="h-6 w-6" />
                   </CircleButton>
+                  <CircleButton
+                    label="Copy share link"
+                    onClick={() => {
+                      const url = `${window.location.origin}/title/${slugify(active.name)}`;
+                      navigator.clipboard?.writeText(url);
+                      toast("Link copied to clipboard", "check");
+                    }}
+                  >
+                    <ShareIcon className="h-5 w-5" />
+                  </CircleButton>
                 </div>
               </div>
             </>
@@ -297,6 +308,16 @@ function CheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className={className} aria-hidden>
       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+function ShareIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <circle cx="18" cy="5" r="2.5" />
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="18" cy="19" r="2.5" />
+      <path strokeLinecap="round" d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4" />
     </svg>
   );
 }
