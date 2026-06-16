@@ -14,6 +14,7 @@ import { useProfile } from "./ProfileProvider";
 
 const myListKey = (pid: string) => `starring:my-list:${pid}`;
 const continueKey = (pid: string) => `starring:continue:${pid}`;
+const recentKey = (pid: string) => `starring:recent:${pid}`;
 
 function readJSON<T>(key: string, fallback: T): T {
   try {
@@ -49,6 +50,8 @@ interface CatalogContextValue {
   continueList: { title: Title; progress: number }[];
   getProgress: (id: number) => number;
   recordProgress: (t: Title, progress: number) => void;
+  recentTitles: Title[];
+  recordView: (t: Title) => void;
 }
 
 const CatalogContext = createContext<CatalogContextValue | null>(null);
@@ -71,21 +74,26 @@ export default function CatalogProvider({
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [listIds, setListIds] = useState<number[]>([]);
+  const [recentIds, setRecentIds] = useState<number[]>([]);
   const [cont, setCont] = useState<ContinueMap>({});
 
   // Refs mirror state so mutators can persist immediately without effect races
   // (important when switching profiles, which swaps the storage keys).
   const listRef = useRef<number[]>([]);
+  const recentRef = useRef<number[]>([]);
   const contRef = useRef<ContinueMap>({});
 
   // (Re)load both lists whenever the active profile changes.
   useEffect(() => {
     const ids = readJSON<number[]>(myListKey(profileId), []);
+    const recent = readJSON<number[]>(recentKey(profileId), []);
     const c = readJSON<ContinueMap>(continueKey(profileId), {});
     listRef.current = ids;
+    recentRef.current = recent;
     contRef.current = c;
     /* eslint-disable react-hooks/set-state-in-effect -- load persisted per-profile lists after mount/profile change */
     setListIds(ids);
+    setRecentIds(recent);
     setCont(c);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [profileId]);
@@ -122,9 +130,24 @@ export default function CatalogProvider({
     [profileId],
   );
 
+  const recordView = useCallback(
+    (t: Title) => {
+      const next = [t.id, ...recentRef.current.filter((id) => id !== t.id)].slice(0, 12);
+      recentRef.current = next;
+      setRecentIds(next);
+      writeJSON(recentKey(profileId), next);
+    },
+    [profileId],
+  );
+
   const myList = useMemo(
     () => listIds.map((id) => byId.get(id)).filter((t): t is Title => Boolean(t)),
     [listIds, byId],
+  );
+
+  const recentTitles = useMemo(
+    () => recentIds.map((id) => byId.get(id)).filter((t): t is Title => Boolean(t)),
+    [recentIds, byId],
   );
 
   const continueList = useMemo(
@@ -170,8 +193,23 @@ export default function CatalogProvider({
       continueList,
       getProgress,
       recordProgress,
+      recentTitles,
+      recordView,
     }),
-    [allTitles, query, searchOpen, results, myList, inList, toggleList, continueList, getProgress, recordProgress],
+    [
+      allTitles,
+      query,
+      searchOpen,
+      results,
+      myList,
+      inList,
+      toggleList,
+      continueList,
+      getProgress,
+      recordProgress,
+      recentTitles,
+      recordView,
+    ],
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;

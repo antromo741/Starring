@@ -7,6 +7,7 @@ import ModalProvider from "@/components/ModalProvider";
 import Navbar from "@/components/Navbar";
 import HomeContent from "@/components/HomeContent";
 import Footer from "@/components/Footer";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 export default async function Home() {
   const { hero, rows, source } = await getHomeData();
@@ -29,6 +30,7 @@ export default async function Home() {
             <Navbar />
             <HomeContent hero={hero} rows={rows} />
             <Footer demoMode={source === "mock"} />
+            <MobileBottomNav />
           </ModalProvider>
         </ToastProvider>
       </CatalogProvider>

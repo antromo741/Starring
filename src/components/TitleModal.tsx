@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useModal } from "./ModalProvider";
 import { useCatalog } from "./CatalogProvider";
 import { useToast } from "./ToastProvider";
-import { backdropSrc, posterGradient } from "@/lib/images";
+import { backdropSrc, mobileHeroSrc, posterGradient } from "@/lib/images";
 import { isSeries } from "@/lib/episodes";
 import { slugify } from "@/lib/slug";
 import EpisodesSection from "./EpisodesSection";
@@ -47,6 +47,8 @@ function TitleModalContent({
   const { inList, toggleList, getProgress, recordProgress } = useCatalog();
   const { toast } = useToast();
   const saved = inList(active.id);
+  const titleId = `title-modal-${active.id}`;
+  const descId = `title-modal-desc-${active.id}`;
 
   // Keep the <video> element's muted property in sync (React won't update it via attribute alone).
   useEffect(() => {
@@ -94,23 +96,28 @@ function TitleModalContent({
   }, [close]);
 
   const backdrop = backdropSrc(active, "w780");
+  const mobileArtwork = mobileHeroSrc(active) ?? backdrop;
+  const desktopArtwork = backdrop ?? mobileArtwork;
 
   return (
     <div
-      className="fixed inset-0 z-[80] flex justify-center overflow-y-auto bg-black/70 p-0 animate-fade-in sm:px-4 sm:py-8"
+      className="fixed inset-0 z-[80] flex items-end justify-center overflow-hidden bg-black/70 p-0 animate-fade-in sm:items-start sm:overflow-y-auto sm:px-4 sm:py-8"
       onClick={close}
       role="dialog"
       aria-modal="true"
-      aria-label={active.name}
+      aria-labelledby={titleId}
+      aria-describedby={descId}
     >
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative min-h-full w-full overflow-hidden bg-[#181818] shadow-2xl outline-none animate-scale-in sm:my-auto sm:min-h-0 sm:max-w-3xl sm:rounded-lg"
+        className="relative max-h-[92svh] w-full overflow-y-auto rounded-t-2xl bg-[#181818] shadow-2xl outline-none animate-scale-in sm:my-auto sm:max-h-none sm:max-w-3xl sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
+        <div aria-hidden className="absolute left-1/2 top-2 z-20 h-1.5 w-12 -translate-x-1/2 rounded-full bg-white/35 sm:hidden" />
+
         {/* Banner / player */}
-        <div className="relative aspect-video w-full bg-black">
+        <div className="relative h-[42svh] min-h-[260px] max-h-[420px] w-full bg-black sm:aspect-video sm:h-auto sm:min-h-0 sm:max-h-none">
           {playing ? (
             active.youtubeKey ? (
               <iframe
@@ -145,6 +152,7 @@ function TitleModalContent({
                   }}
                 />
                 <button
+                  type="button"
                   onClick={() => setMuted((m) => !m)}
                   aria-label={muted ? "Unmute" : "Mute"}
                   className="absolute right-16 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-black/50 text-white transition hover:border-white"
@@ -155,21 +163,33 @@ function TitleModalContent({
             )
           ) : (
             <>
-              {backdrop ? (
-                <Image
-                  src={backdrop}
-                  alt={active.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 768px"
-                  className="object-cover"
-                  priority
-                />
+              {mobileArtwork ? (
+                <>
+                  <Image
+                    src={mobileArtwork}
+                    alt={active.name}
+                    fill
+                    sizes="100vw"
+                    className="object-cover object-[50%_24%] sm:hidden"
+                    priority
+                  />
+                  {desktopArtwork && (
+                    <Image
+                      src={desktopArtwork}
+                      alt={active.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 768px"
+                      className="hidden object-cover sm:block"
+                      priority
+                    />
+                  )}
+                </>
               ) : (
                 <div
                   className="absolute inset-0 flex items-end p-8"
                   style={{ background: posterGradient(active.name) }}
                 >
-                  <h2 className="text-3xl font-extrabold drop-shadow-lg sm:text-5xl">
+                  <h2 id={titleId} className="text-3xl font-extrabold drop-shadow-lg sm:text-5xl">
                     {active.name}
                   </h2>
                 </div>
@@ -178,17 +198,18 @@ function TitleModalContent({
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent" />
 
               {/* Title + actions overlaid on the banner */}
-              <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-4">
-                {backdrop && (
-                  <h2 className="max-w-[70%] text-2xl font-extrabold drop-shadow-lg sm:text-4xl">
+              <div className="absolute bottom-5 left-4 right-4 flex flex-col gap-3 sm:bottom-6 sm:left-6 sm:right-6 sm:gap-4">
+                {mobileArtwork && (
+                  <h2 id={titleId} className="max-w-[82%] text-2xl font-extrabold drop-shadow-lg sm:max-w-[70%] sm:text-4xl">
                     {active.name}
                   </h2>
                 )}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <motion.button
+                    type="button"
                     whileTap={{ scale: 0.94 }}
                     onClick={() => setPlaying(true)}
-                    className="flex items-center gap-2 rounded bg-white px-6 py-2 font-semibold text-black transition hover:bg-white/80"
+                    className="flex items-center gap-2 rounded bg-white px-5 py-2 text-sm font-semibold text-black transition hover:bg-white/80 sm:px-6 sm:text-base"
                   >
                     <PlayIcon className="h-5 w-5" />
                     Play
@@ -222,6 +243,7 @@ function TitleModalContent({
 
           {/* Close button */}
           <button
+            type="button"
             onClick={close}
             aria-label="Close"
             className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#181818]/80 text-white transition hover:bg-[#181818]"
@@ -244,7 +266,7 @@ function TitleModalContent({
             </span>
           </div>
 
-          <p className="text-sm leading-relaxed text-neutral-200 sm:text-base">
+          <p id={descId} className="text-sm leading-relaxed text-neutral-200 sm:text-base">
             {active.overview}
           </p>
 
@@ -281,6 +303,7 @@ function CircleButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       aria-label={label}
       title={label}

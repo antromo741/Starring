@@ -16,6 +16,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/redbeard.png",
     "backdropImage": "/starring/redbeard-wide.png",
+    "mobileHeroImage": "/starring/redbeard-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -32,6 +33,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/genesis-protocol.png",
     "backdropImage": "/starring/genesis-protocol-wide.png",
+    "mobileHeroImage": "/starring/genesis-protocol-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -48,6 +50,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/the-long-game.png",
     "backdropImage": "/starring/the-long-game-wide.png",
+    "mobileHeroImage": "/starring/the-long-game-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -63,6 +66,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/static.png",
     "backdropImage": "/starring/static-wide.png",
+    "mobileHeroImage": "/starring/static-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -78,6 +82,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/beard-necessities.png",
     "backdropImage": "/starring/beard-necessities-wide.png",
+    "mobileHeroImage": "/starring/beard-necessities-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -93,6 +98,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/ironwood.png",
     "backdropImage": "/starring/ironwood-wide.png",
+    "mobileHeroImage": "/starring/ironwood-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -109,6 +115,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/dust-and-ash.png",
     "backdropImage": "/starring/dust-and-ash-wide.png",
+    "mobileHeroImage": "/starring/dust-and-ash-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -125,6 +132,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/closer.png",
     "backdropImage": "/starring/closer-wide.png",
+    "mobileHeroImage": "/starring/closer-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -141,6 +149,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/the-ember-crown.png",
     "backdropImage": "/starring/the-ember-crown-wide.png",
+    "mobileHeroImage": "/starring/the-ember-crown-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   },
   {
@@ -156,6 +165,7 @@ export const STARRING: Title[] = [
     ],
     "posterImage": "/starring/the-last-commit.png",
     "backdropImage": "/starring/the-last-commit-wide.png",
+    "mobileHeroImage": "/starring/the-last-commit-mobile.png",
     "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
   }
 ];

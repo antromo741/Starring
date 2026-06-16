@@ -8,6 +8,8 @@ import Top10Row from "./Top10Row";
 import MyListRow from "./MyListRow";
 import ContinueRow from "./ContinueRow";
 import SearchResults from "./SearchResults";
+import PersonalizedRows from "./PersonalizedRows";
+import StarringYouSpotlight from "./StarringYouSpotlight";
 import { useCatalog } from "./CatalogProvider";
 
 export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType[] }) {
@@ -26,7 +28,7 @@ export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType
 
   if (searching) {
     return (
-      <main className="flex-1 pt-24">
+      <main className="flex-1 pb-24 pt-24 sm:pb-8">
         <SearchResults />
       </main>
     );
@@ -36,9 +38,11 @@ export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType
     <main className="flex-1">
       <Hero title={hero} />
       {/* Rows pulled up to overlap the hero's bottom fade */}
-      <div className="relative z-10 -mt-16 space-y-8 pb-8 sm:-mt-24">
+      <div className="relative z-10 -mt-16 space-y-8 pb-24 sm:-mt-24 sm:pb-8">
+        <StarringYouSpotlight />
         <ContinueRow />
         <MyListRow />
+        <PersonalizedRows />
         {top10 && <Top10Row title="Trending Today" items={top10.items} />}
         {rows.map((row) => (
           <Row key={row.id} row={row} />

@@ -37,12 +37,14 @@ export default function Navbar() {
     clearSearch();
     if (link === "Watchlist") {
       document.getElementById("my-list")?.scrollIntoView({ behavior: "smooth" });
+    } else if (link === "Starring You") {
+      document.getElementById("starring-you")?.scrollIntoView({ behavior: "smooth" });
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const LINKS = ["Home", "TV Shows", "Movies", "New & Popular", "Watchlist"];
+  const LINKS = ["Home", "Starring You", "TV Shows", "Movies", "Watchlist"];
 
   return (
     <>

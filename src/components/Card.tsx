@@ -46,7 +46,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             alt={title.name}
             fill
             sizes="180px"
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105 group-focus:scale-105"
             onError={() => setBroken(true)}
           />
         </>
@@ -70,9 +70,10 @@ export default function Card({ title, progress }: { title: Title; progress?: num
       )}
 
       {/* Hover overlay with quick actions */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
+      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
         <div className="pointer-events-auto mb-2 flex items-center gap-1.5">
           <button
+            type="button"
             onClick={(e) => { stop(e); open(title, true); }}
             aria-label={`Play ${title.name}`}
             className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-black transition hover:bg-white/80"
@@ -80,6 +81,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             <PlayIcon className="h-3.5 w-3.5" />
           </button>
           <button
+            type="button"
             onClick={(e) => {
               stop(e);
               toggleList(title);
@@ -92,6 +94,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             {saved ? <CheckIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
           </button>
           <button
+            type="button"
             onClick={stop}
             aria-label="I like this"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 bg-black/50 text-white transition hover:border-white"

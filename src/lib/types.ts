@@ -18,6 +18,8 @@ export interface Title {
   posterImage?: string;
   /** Ready-to-use local landscape/backdrop URL. Takes priority. */
   backdropImage?: string;
+  /** Ready-to-use portrait/phone hero URL. */
+  mobileHeroImage?: string;
   /** YouTube key (TMDB) or a direct video URL used by the player. */
   videoUrl?: string;
   youtubeKey?: string;

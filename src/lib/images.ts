@@ -16,6 +16,7 @@ export function backdropSrc(
 
 /** Prefer text-free portrait source art for phone hero crops when available. */
 export function mobileHeroSrc(t: Title): string | undefined {
+  if (t.mobileHeroImage) return t.mobileHeroImage;
   const local = t.backdropImage ?? t.posterImage;
   const match = local?.match(/^\/starring\/(.+?)(?:-wide)?\.(?:png|jpg|jpeg|webp)$/);
   return match ? `/starring/source/${match[1]}.png` : undefined;

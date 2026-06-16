@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Row as RowType } from "@/lib/types";
 import Card from "./Card";
 
@@ -11,6 +12,7 @@ export default function Row({
   row: RowType;
   progressById?: Record<number, number>;
 }) {
+  const reduceMotion = useReducedMotion();
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
@@ -35,7 +37,14 @@ export default function Row({
   };
 
   return (
-    <section className="group/row space-y-2">
+    <motion.section
+      id={row.id}
+      className="group/row space-y-2"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "0px 0px -80px 0px" }}
+      transition={{ duration: reduceMotion ? 0 : 0.35, ease: "easeOut" }}
+    >
       <h2 className="px-4 text-lg font-semibold text-neutral-200 sm:px-8 md:text-xl">
         {row.title}
       </h2>
@@ -69,7 +78,7 @@ export default function Row({
           <Chevron className="h-8 w-8" />
         </button>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

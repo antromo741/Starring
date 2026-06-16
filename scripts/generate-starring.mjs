@@ -335,6 +335,28 @@ async function composeWideFromPortraitSource(srcPath, cfg, W, H) {
     .toBuffer();
 }
 
+async function composeMobileSource(photoBuf, cfg, W, H) {
+  const src = await findSource(cfg.slug, false);
+  if (src) {
+    return sharp(src.path)
+      .rotate()
+      .resize(W, H, { fit: "cover", position: "attention" })
+      .modulate({ brightness: 0.94, saturation: 1.02 })
+      .png()
+      .toBuffer();
+  }
+
+  if (!photoBuf) {
+    throw new Error(`No source image or base headshot available for mobile hero "${cfg.slug}".`);
+  }
+
+  const face = await stylize(photoBuf, STYLE[cfg.slug] ?? "comic", W, Math.round(H * 0.68));
+  return sharp(Buffer.from(bgSVG(cfg, W, H)))
+    .composite([{ input: face, top: 0, left: 0 }])
+    .png()
+    .toBuffer();
+}
+
 async function compose(photoBuf, cfg, W, H, wide) {
   // 1) If a generated source image exists, frame it full-bleed + scrim + text.
   const src = await findSource(cfg.slug, wide);
@@ -391,14 +413,17 @@ let id = 9101;
 for (const cfg of TITLES) {
   const poster = await compose(photoBuf, cfg, 600, 900, false);
   const wide = await compose(photoBuf, cfg, 1280, 720, true);
+  const mobile = await composeMobileSource(photoBuf, cfg, 900, 1400);
   await writeFile(join(OUT, `${cfg.slug}.png`), poster);
   await writeFile(join(OUT, `${cfg.slug}-wide.png`), wide);
+  await writeFile(join(OUT, `${cfg.slug}-mobile.png`), mobile);
   records.push({
     id: id++, name: cfg.name, overview: cfg.overview, year: cfg.year,
     rating: cfg.rating, matchPct: 90 + (seedOf(cfg.slug) % 10), length: cfg.length,
     genres: cfg.genre.split(" · "),
     posterImage: `/starring/${cfg.slug}.png`,
     backdropImage: `/starring/${cfg.slug}-wide.png`,
+    mobileHeroImage: `/starring/${cfg.slug}-mobile.png`,
     videoUrl: SAMPLE_VIDEO,
   });
   console.log("composed", cfg.slug);
