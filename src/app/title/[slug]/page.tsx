@@ -47,7 +47,7 @@ export default async function TitlePage({ params }: { params: Promise<{ slug: st
   const desktopArtwork = backdrop ?? mobileArtwork;
 
   return (
-    <main className="min-h-[100svh]">
+    <main id="main-content" className="min-h-[100svh]">
       <header className="fixed inset-x-0 top-0 z-20 bg-gradient-to-b from-black/80 to-transparent px-4 py-3 sm:px-8">
         <Link href="/" className="text-2xl font-extrabold tracking-tight text-accent sm:text-3xl">
           STARRING

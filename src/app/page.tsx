@@ -1,5 +1,4 @@
-import { getHomeData } from "@/lib/content";
-import type { Title } from "@/lib/types";
+import { getAllTitles, getHomeData } from "@/lib/content";
 import ProfileProvider from "@/components/ProfileProvider";
 import CatalogProvider from "@/components/CatalogProvider";
 import ToastProvider from "@/components/ToastProvider";
@@ -11,16 +10,8 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 
 export default async function Home() {
   const { hero, rows, source } = await getHomeData();
-
-  // Flatten + de-duplicate every title so search and "Watchlist" can look any up.
-  const seen = new Set<number>();
-  const allTitles: Title[] = [];
-  for (const t of [hero, ...rows.flatMap((r) => r.items)]) {
-    if (!seen.has(t.id)) {
-      seen.add(t.id);
-      allTitles.push(t);
-    }
-  }
+  // Flattened + de-duplicated so search and "Watchlist" can look any title up.
+  const allTitles = await getAllTitles();
 
   return (
     <ProfileProvider>

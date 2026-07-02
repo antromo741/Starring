@@ -28,14 +28,14 @@ export default function HomeContent({ hero, rows }: { hero: Title; rows: RowType
 
   if (searching) {
     return (
-      <main className="flex-1 pb-24 pt-24 sm:pb-8">
+      <main id="main-content" className="flex-1 pb-24 pt-24 sm:pb-8">
         <SearchResults />
       </main>
     );
   }
 
   return (
-    <main className="flex-1">
+    <main id="main-content" className="flex-1">
       <Hero title={hero} />
       {/* Rows pulled up to overlap the hero's bottom fade */}
       <div className="relative z-10 -mt-16 space-y-8 pb-24 sm:-mt-24 sm:pb-8">

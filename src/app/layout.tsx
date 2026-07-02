@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // Prefer an explicit site URL, else Netlify's build-time URL, else localhost.
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? process.env.URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(siteUrl()),
   title: { default: "Starring — Personalized Streaming Catalog", template: "%s · Starring" },
   description:
     "A personalized streaming catalog app built with Next.js, React and Tailwind CSS — with a build-time 'Starring You' poster pipeline, search, Watchlist, profiles and Continue Watching.",
@@ -49,7 +48,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:font-semibold focus:text-black"
+        >
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

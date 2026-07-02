@@ -14,14 +14,16 @@ export default function Top10Row({ title, items }: { title: string; items: Title
       <div className="no-scrollbar flex items-center gap-0 overflow-x-auto px-4 py-2 sm:px-8">
         {top.map((t, i) => (
           <div key={t.id} className="flex shrink-0 items-center">
+            {/* Keep most of the digit visible on phones; tuck it under the card on larger screens */}
             <span
               aria-hidden
-              className="pointer-events-none select-none font-black leading-none"
+              className={`pointer-events-none select-none font-black leading-none ${
+                i === 9 ? "-mr-1 sm:mr-[-0.6rem]" : "-mr-2 sm:mr-[-1.4rem]"
+              }`}
               style={{
-                fontSize: "clamp(4rem, 13vw, 9rem)",
+                fontSize: "clamp(5rem, 13vw, 9rem)",
                 color: "#141414",
                 WebkitTextStroke: "3px #5b616b",
-                marginRight: i === 9 ? "-0.6rem" : "-1.4rem",
               }}
             >
               {i + 1}

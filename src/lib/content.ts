@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import type { Row, Title } from "./types";
 import { HERO_TITLE, HOME_ROWS } from "./mockData";
 import { getTmdbHome, hasTmdbKey } from "./tmdb";
@@ -7,13 +8,14 @@ import { slugify } from "./slug";
 /**
  * Single source of truth for the home page. Returns real TMDB data when a key
  * is configured, otherwise the bundled mock catalog. Any TMDB failure falls
- * back to mock so the page never breaks.
+ * back to mock so the page never breaks. Wrapped in React cache() so multiple
+ * callers within one request (page + generateMetadata + sitemap) share one fetch.
  */
-export async function getHomeData(): Promise<{
+export const getHomeData = cache(async (): Promise<{
   hero: Title;
   rows: Row[];
   source: "tmdb" | "mock";
-}> {
+}> => {
   if (hasTmdbKey()) {
     try {
       const { hero, rows } = await getTmdbHome();
@@ -23,7 +25,7 @@ export async function getHomeData(): Promise<{
     }
   }
   return { hero: HERO_TITLE, rows: HOME_ROWS, source: "mock" };
-}
+});
 
 /** Flattened, de-duplicated catalog (hero + every row). */
 export async function getAllTitles(): Promise<Title[]> {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCatalog } from "./CatalogProvider";
 import { useProfile, ProfileAvatar } from "./ProfileProvider";
+import { useToast } from "./ToastProvider";
 import PosterStudio from "./PosterStudio";
 
 export default function Navbar() {
@@ -11,6 +12,7 @@ export default function Navbar() {
   const [studioOpen, setStudioOpen] = useState(false);
   const { query, setQuery, searchOpen, setSearchOpen } = useCatalog();
   const { current, openGate } = useProfile();
+  const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -36,7 +38,9 @@ export default function Navbar() {
   const onLink = (link: string) => {
     clearSearch();
     if (link === "Watchlist") {
-      document.getElementById("my-list")?.scrollIntoView({ behavior: "smooth" });
+      const el = document.getElementById("my-list");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      else toast("Your Watchlist is empty — tap + on any title to add it");
     } else if (link === "Starring You") {
       document.getElementById("starring-you")?.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -128,7 +132,14 @@ export default function Navbar() {
             <span aria-hidden>★</span>
             <span className="hidden md:inline">Make Yours</span>
           </button>
-          <BellIcon className="hidden h-5 w-5 cursor-pointer sm:block" />
+          <button
+            type="button"
+            onClick={() => toast("You're all caught up — no new notifications")}
+            aria-label="Notifications"
+            className="hidden sm:block"
+          >
+            <BellIcon className="h-5 w-5" />
+          </button>
           <button
             onClick={openGate}
             aria-label="Switch profile"

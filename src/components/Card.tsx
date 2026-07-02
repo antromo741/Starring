@@ -45,7 +45,7 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             src={poster}
             alt={title.name}
             fill
-            sizes="180px"
+            sizes="(min-width: 768px) 180px, (min-width: 640px) 160px, 140px"
             className="object-cover transition-transform duration-500 group-hover:scale-105 group-focus:scale-105"
             onError={() => setBroken(true)}
           />
@@ -69,8 +69,24 @@ export default function Card({ title, progress }: { title: Title; progress?: num
         </div>
       )}
 
-      {/* Hover overlay with quick actions */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+      {/* Mobile: a single quick-add button — posters stay clean, tap opens details */}
+      <button
+        type="button"
+        onClick={(e) => {
+          stop(e);
+          toggleList(title);
+          toast(saved ? "Removed from Watchlist" : "Added to Watchlist", saved ? "minus" : "check");
+        }}
+        aria-label={saved ? `Remove ${title.name} from Watchlist` : `Add ${title.name} to Watchlist`}
+        className={`absolute right-1.5 top-1.5 z-20 flex h-8 w-8 items-center justify-center rounded-full border text-white backdrop-blur-sm transition md:hidden ${
+          saved ? "border-accent bg-accent/90 text-black" : "border-white/40 bg-black/60"
+        }`}
+      >
+        {saved ? <CheckIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
+      </button>
+
+      {/* Desktop hover overlay with quick actions */}
+      <div className="pointer-events-none absolute inset-0 hidden flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-300 md:flex md:group-hover:opacity-100 md:group-focus-within:opacity-100">
         <div className="pointer-events-auto mb-2 flex items-center gap-1.5">
           <button
             type="button"
@@ -102,7 +118,8 @@ export default function Card({ title, progress }: { title: Title; progress?: num
             <ThumbIcon className="h-3.5 w-3.5" />
           </button>
         </div>
-        <p className="truncate text-sm font-semibold">{title.name}</p>
+        {/* Gradient-fallback cards already paint their own name — don't repeat it */}
+        {showImage && <p className="truncate text-sm font-semibold">{title.name}</p>}
         <div className="mt-1 flex items-center gap-2 text-[11px]">
           <span className="font-semibold text-green-500">{title.matchPct}%</span>
           <span className="rounded border border-neutral-500 px-1 text-neutral-300">{title.rating}</span>

@@ -34,8 +34,12 @@ async function tmdb<T>(path: string, params: Record<string, string> = {}): Promi
   url.searchParams.set("api_key", process.env.TMDB_API_KEY as string);
   url.searchParams.set("language", "en-US");
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  // Cache for a day — this is catalog data that rarely changes.
-  const res = await fetch(url, { next: { revalidate: 60 * 60 * 24 } });
+  // Cache for a day — this is catalog data that rarely changes. The timeout
+  // keeps a slow TMDB from stalling server rendering; callers fall back to mock.
+  const res = await fetch(url, {
+    next: { revalidate: 60 * 60 * 24 },
+    signal: AbortSignal.timeout(8000),
+  });
   if (!res.ok) throw new Error(`TMDB ${path} → ${res.status}`);
   return res.json() as Promise<T>;
 }

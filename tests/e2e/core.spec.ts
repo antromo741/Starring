@@ -35,8 +35,9 @@ test("watchlist persists a title in the current profile", async ({ page }) => {
   await page.goto("/");
 
   await page.getByRole("button", { name: /Redbeard.*open details/i }).first().click();
-  await page.getByRole("button", { name: "Add to Watchlist" }).click();
-  await page.getByRole("button", { name: "Close" }).click();
+  const dialog = page.getByRole("dialog", { name: "Redbeard" });
+  await dialog.getByRole("button", { name: "Add to Watchlist" }).click();
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
 
   await expect(page.getByRole("heading", { name: "Watchlist" })).toBeVisible();
   await expect(page.locator("#my-list").getByRole("button", { name: /Redbeard.*open details/i })).toBeVisible();

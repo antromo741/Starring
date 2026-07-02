@@ -2,10 +2,12 @@
 
 import { useCatalog } from "./CatalogProvider";
 import { useProfile } from "./ProfileProvider";
+import { useToast } from "./ToastProvider";
 
 export default function MobileBottomNav() {
   const { query, setQuery, setSearchOpen } = useCatalog();
   const { openGate } = useProfile();
+  const { toast } = useToast();
 
   const goHome = () => {
     setQuery("");
@@ -21,7 +23,12 @@ export default function MobileBottomNav() {
   const goWatchlist = () => {
     setQuery("");
     setSearchOpen(false);
-    document.getElementById("my-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = document.getElementById("my-list");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      toast("Your Watchlist is empty — tap + on any title to add it");
+    }
   };
 
   return (
@@ -62,6 +69,7 @@ function NavButton({
     <button
       type="button"
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={`flex flex-col items-center gap-1 rounded-md px-2 py-1.5 text-[11px] font-medium transition ${
         active ? "text-accent" : "text-neutral-400 hover:text-white"
       }`}
